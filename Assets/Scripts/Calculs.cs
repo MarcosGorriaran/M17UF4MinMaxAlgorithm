@@ -49,7 +49,7 @@ public static class Calculs
             counterD2 += (int)matrix[2-i, i];
         }
         if (counterD1 == 3 || counterD2 == 3) return GameResult.Victory;
-        else if(counterD1 == -3 || counterD2 == 3)  return GameResult.Defeat;
+        else if(counterD1 == -3 || counterD2 == -3)  return GameResult.Defeat;
         for(int i=0; i<matrix.GetLength(0);i++)
         {
             for(int j = 0; j < matrix.GetLength(1);j++)

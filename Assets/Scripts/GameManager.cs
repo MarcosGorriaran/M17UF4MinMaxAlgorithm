@@ -65,7 +65,8 @@ public class GameManager : MonoBehaviour
     private IEnumerator WaitingABit()
     {
         yield return new WaitForSeconds(1f);
-        RandomAI();
+        //RandomAI();
+        MinMaxAI();
     }
     public void RandomAI()
     {
@@ -77,6 +78,23 @@ public class GameManager : MonoBehaviour
             y = Random.Range(0, Size);
         } while (Matrix[x, y] != MatrixStatus.Empty);
         DoMove(x, y, MatrixStatus.IA);
+        state = States.CanMove;
+    }
+    public void MinMaxAI()
+    {
+        Node node = new Node(Matrix,MatrixStatus.IA);
+        MatrixStatus[,] newTableState= node.ChoosenNode.PredictedTable;
+
+        for(int i = 0; i < newTableState.GetLength(0); i++)
+        {
+            for(int j = 0; j < newTableState.GetLength(1); j++)
+            {
+                if (newTableState[i,j] != Matrix[i, j])
+                {
+                    DoMove(i,j, MatrixStatus.IA);
+                }
+            }
+        }
         state = States.CanMove;
     }
     public void DoMove(int x, int y, MatrixStatus team)
