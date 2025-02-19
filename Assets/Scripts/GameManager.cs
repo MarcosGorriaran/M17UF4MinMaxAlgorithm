@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 public enum States
 {
@@ -66,7 +67,7 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         //RandomAI();
-        MinMaxAI();
+        yield return new WaitUntil(()=>MinMaxAI().GetAwaiter().IsCompleted);
     }
     public void RandomAI()
     {
@@ -80,7 +81,7 @@ public class GameManager : MonoBehaviour
         DoMove(x, y, MatrixStatus.IA);
         state = States.CanMove;
     }
-    public void MinMaxAI()
+    public async Task MinMaxAI()
     {
         Node node = new Node(Matrix,MatrixStatus.IA);
         MatrixStatus[,] newTableState= node.ChoosenNode.PredictedTable;

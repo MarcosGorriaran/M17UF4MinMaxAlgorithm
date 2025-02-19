@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class Node
 {
@@ -37,20 +36,12 @@ public class Node
             throw new Exception("You can't assign Empty as the actual player");
         }
         GameResult result = Calculs.EvaluateWin(ticTacToeStatus);
-        _turnOrder = actualTurnOrder;
-        _predictionTable = new MatrixStatus[ticTacToeStatus.GetLength(0), ticTacToeStatus.GetLength(1)];
-        //Copy by value
-        for(int i = 0; i < _predictionTable.GetLength(0); i++)
-        {
-            for(int j = 0; j < _predictionTable.GetLength(1); j++)
-            {
-                _predictionTable[i, j] = ticTacToeStatus[i, j].CloneViaSerialization();
-            }
-        }
-        _predictionTable = ticTacToeStatus;
+        _turnOrder = Calculs.CopyMatrixStatusByValue(actualTurnOrder);
+        _predictionTable = Calculs.CopyMatrixByValue(ticTacToeStatus);
+        
         if (result!=GameResult.NotFinished)
         {
-            _nodeValue = Convert.ToSingle((int)result);
+            _nodeValue = Convert.ToSingle((int)result) * -1;
         }
         else
         {
@@ -58,11 +49,11 @@ public class Node
             {
                 for(int j = 0; j < _predictionTable.GetLength(1); j++)
                 {
-                    MatrixStatus[,] nextMove = ticTacToeStatus;
+                    MatrixStatus[,] nextMove = Calculs.CopyMatrixByValue(ticTacToeStatus);
                     MatrixStatus nextTurn = actualTurnOrder == MatrixStatus.Player ? MatrixStatus.IA : MatrixStatus.Player;
                     if (nextMove[i, j] == MatrixStatus.Empty)
                     {
-                        nextMove[i, j] = actualTurnOrder;
+                        nextMove[i, j] = Calculs.CopyMatrixStatusByValue(actualTurnOrder);
                         _nodeNextStep.Add(new Node(nextMove,nextTurn,this)); 
                     }
                     
@@ -127,6 +118,7 @@ public class Node
     }
     private bool PerformProoning()
     {
-        return _turnOrder == MatrixStatus.IA ? _alpha>=_beta : _alpha<=_beta;
+        return _alpha>=_beta;
     }
+    
 }

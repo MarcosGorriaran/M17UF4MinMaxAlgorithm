@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 /**
@@ -79,5 +80,21 @@ public static class Calculs
             }
         }
         return false;
+    }
+    public static MatrixStatus[,] CopyMatrixByValue(MatrixStatus[,] matrixStatus)
+    {
+        MatrixStatus[,] newTable = new MatrixStatus[matrixStatus.GetLength(0), matrixStatus.GetLength(1)];
+        for (int i = 0; i < newTable.GetLength(0); i++)
+        {
+            for (int j = 0; j < newTable.GetLength(1); j++)
+            {
+                newTable[i, j] = matrixStatus[i, j].CloneViaSerialization();
+            }
+        }
+        return newTable;
+    }
+    public static MatrixStatus CopyMatrixStatusByValue(MatrixStatus status) 
+    {
+        return status.CloneViaSerialization();
     }
 }
