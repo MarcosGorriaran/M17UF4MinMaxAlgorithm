@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     public MatrixStatus[,] Matrix;
     [SerializeField] private States state = States.CanMove;
     public Camera camera;
+    [SerializeField]
+    private LoadingIcon _thinkingFeedback;
     void Start()
     {
         Instance = this;
@@ -66,8 +68,9 @@ public class GameManager : MonoBehaviour
     private IEnumerator WaitingABit()
     {
         yield return new WaitForSeconds(1f);
-        //RandomAI();
+        _thinkingFeedback.LoadingHasStarted();
         yield return new WaitUntil(()=>MinMaxAI().GetAwaiter().IsCompleted);
+        _thinkingFeedback.LoadingHasStoped();
     }
     public void RandomAI()
     {
@@ -97,6 +100,7 @@ public class GameManager : MonoBehaviour
             }
         }
         state = States.CanMove;
+        return;
     }
     public void DoMove(int x, int y, MatrixStatus team)
     {

@@ -88,7 +88,7 @@ public static class Calculs
         {
             for (int j = 0; j < newTable.GetLength(1); j++)
             {
-                newTable[i, j] = matrixStatus[i, j].CloneViaSerialization();
+                newTable[i, j] = (MatrixStatus)((int)matrixStatus[i, j]);
             }
         }
         return newTable;
