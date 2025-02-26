@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public enum States
 {
     CanMove,
@@ -30,6 +31,10 @@ public class GameManager : MonoBehaviour
     public Camera camera;
     [SerializeField]
     private LoadingIcon _thinkingFeedback;
+    [SerializeField]
+    private AudioSource _drawSound;
+    [SerializeField]
+    private ToggleButton _toggleButton;
     void Start()
     {
         Instance = this;
@@ -69,7 +74,15 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         _thinkingFeedback.LoadingHasStarted();
-        yield return new WaitUntil(()=>MinMaxAI().GetAwaiter().IsCompleted);
+        if (_toggleButton.IsOn())
+        {
+            RandomAI();
+        }
+        else
+        {
+            yield return new WaitUntil(() => MinMaxAI().GetAwaiter().IsCompleted);
+        }
+        
         _thinkingFeedback.LoadingHasStoped();
     }
     public void RandomAI()
@@ -113,18 +126,24 @@ public class GameManager : MonoBehaviour
         switch (result)
         {
             case GameResult.Draw:
-                Debug.Log("Draw");
+                StartCoroutine(ReloadScene());
                 break;
             case GameResult.Victory:
-                Debug.Log("You Win");
+                FindFirstObjectByType<ChangeScene>().LoadScene("VictoryScreen");
                 break;
             case GameResult.Defeat:
-                Debug.Log("You Lose");
+                FindFirstObjectByType<ChangeScene>().LoadScene("DefeatScreen");
                 break;
             case GameResult.NotFinished:
                 if(state == States.CantMove)
                     state = States.CanMove;
                 break;
         }
+    }
+    private IEnumerator ReloadScene()
+    {
+        _drawSound.Play();
+        yield return new WaitUntil(()=>!_drawSound.isPlaying);
+        FindFirstObjectByType<ChangeScene>().LoadScene("SampleScene");
     }
 }
