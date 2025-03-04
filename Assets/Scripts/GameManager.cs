@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 public enum States
 {
     CanMove,
@@ -129,16 +127,27 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(ReloadScene());
                 break;
             case GameResult.Victory:
-                FindFirstObjectByType<ChangeScene>().LoadScene("VictoryScreen");
+                StartCoroutine(ShowWinner("VictoryScreen"));
                 break;
             case GameResult.Defeat:
-                FindFirstObjectByType<ChangeScene>().LoadScene("DefeatScreen");
+                StartCoroutine(ShowWinner("DefeatScreen"));
                 break;
             case GameResult.NotFinished:
                 if(state == States.CantMove)
                     state = States.CanMove;
                 break;
         }
+    }
+    private IEnumerator ShowWinner(string nextScene)
+    {
+        LineRenderer lineDrawer =  FindFirstObjectByType<LineRenderer>();
+        lineDrawer.positionCount = Calculs.BoardLineLength;
+        for(int i = 0; i<Calculs.BoardLineLength; i++)
+        {
+            lineDrawer.SetPosition(i, Calculs.GetWiningLineCordinates(i));
+        }
+        yield return new WaitForSeconds(2);
+        FindFirstObjectByType<ChangeScene>().LoadScene(nextScene);
     }
     private IEnumerator ReloadScene()
     {

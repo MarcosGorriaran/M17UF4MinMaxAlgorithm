@@ -17,9 +17,16 @@ public enum GameResult : int
 }
 public static class Calculs
 {
+    public const int BoardLineLength = 3;
     public static float LinearDistance;
     public static Vector2 FirstPosition;
+    private static Vector2[] _winingLineCordinates;
     private static float offset = 0.1f;
+
+    public static Vector2 GetWiningLineCordinates(int index)
+    {
+        return _winingLineCordinates[index];
+    }
     public static void CalculateDistances(BoxCollider2D coll, float size)
     {
         LinearDistance = coll.size.x / size;
@@ -42,15 +49,90 @@ public static class Calculs
                 counterY += (int)matrix[i, j];
                 counterX += (int)matrix[j, i];
             }
-            if (counterY == 3 || counterX == 3) return GameResult.Victory;
-            else if (counterY == -3 || counterX ==-3) return GameResult.Defeat;
+            if (counterY == 3 || counterX == 3)
+            {
+                _winingLineCordinates = new Vector2[BoardLineLength];
+                if (counterY == BoardLineLength)
+                {
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    {
+                        _winingLineCordinates[j] = CalculatePoint(i, j);
+                    }
+                    
+                }
+                else
+                {
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    {
+                        _winingLineCordinates[j] = CalculatePoint(j,i);
+                    }
+                }
+                return GameResult.Victory;
+            }
+            else if (counterY == -3 || counterX == -3)
+            {
+                _winingLineCordinates = new Vector2[BoardLineLength];
+                if (counterY == -BoardLineLength)
+                {
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    {
+                        _winingLineCordinates[j] = CalculatePoint(i, j);
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    {
+                        _winingLineCordinates[j] = CalculatePoint(j, i);
+                    }
+                }
+                
+                return GameResult.Defeat;
+            }
             counterX = 0;
             counterY = 0;
             counterD1 += (int)matrix[i, i];
             counterD2 += (int)matrix[2-i, i];
         }
-        if (counterD1 == 3 || counterD2 == 3) return GameResult.Victory;
-        else if(counterD1 == -3 || counterD2 == -3)  return GameResult.Defeat;
+        if (counterD1 == 3 || counterD2 == 3)
+        {
+            _winingLineCordinates = new Vector2[BoardLineLength];
+            if (counterD1 == BoardLineLength)
+            {
+                for (int i = 0; i < BoardLineLength; i++)
+                {
+                    _winingLineCordinates[i] = CalculatePoint(i, i);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < BoardLineLength; i++)
+                {
+                    _winingLineCordinates[i] = CalculatePoint(2 - i, i);
+                }
+            }
+
+            return GameResult.Victory;
+        }
+        else if (counterD1 == -3 || counterD2 == -3)
+        {
+            _winingLineCordinates = new Vector2[BoardLineLength];
+            if (counterD1 == -BoardLineLength)
+            {
+                for (int i = 0; i < BoardLineLength; i++)
+                {
+                    _winingLineCordinates[i] = CalculatePoint(i, i);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < BoardLineLength; i++)
+                {
+                    _winingLineCordinates[i] = CalculatePoint(2 - i, i);
+                }
+            }
+            return GameResult.Defeat;
+        }
         for(int i=0; i<matrix.GetLength(0);i++)
         {
             for(int j = 0; j < matrix.GetLength(1);j++)
